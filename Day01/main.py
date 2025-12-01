@@ -1,5 +1,4 @@
 # AoC 2025 - Heme98
-
 from pathlib import Path
 
 def count_zero_interactions(instructions: list[str], count_all_interactions: bool) -> int:
@@ -37,7 +36,6 @@ def count_zero_interactions(instructions: list[str], count_all_interactions: boo
             dial_pos = (dial_pos + rot) % 100
                 
     return zero_interactions
-
 
 def part_one(data: str):
     instructions = data.strip().split('\n')
