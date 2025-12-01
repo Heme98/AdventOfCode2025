@@ -1,57 +1,46 @@
 import Utils.utils
 
 def apply_rotation(rotation: list[str], new_protocol: bool) -> int:
-    wrap_arounds = 0
     exactly_zero = 0
+    zero_interaction = 0
     start_value = 50
     
     for r in rotation:
         direction, amount = r[0], int(r[1:])
         
-        # Calculate zero crossings
-        if direction == "L":
-            
-            # old method, only count when reaching exactly zero
-            if not new_protocol and start_value == 0:
-                exactly_zero += 1
-            
-            # new method, count zero and all zero crossings
-            if new_protocol:
-                number_of_wraps = abs((start_value - amount) // 100)
-                wrap_arounds = wrap_arounds + number_of_wraps
-                
-        elif direction == "R":
-            # old method, only count when reaching exactly zero
-            if not new_protocol and start_value == 0:
-                exactly_zero += 1
-            
-            # new method, count zero and all zero crossings
-            if new_protocol:
-                number_of_wraps = (start_value + amount) // 100
-                wrap_arounds = wrap_arounds + number_of_wraps
+        # Old protocol, only count when reaching exactly zero
+        if not new_protocol and start_value == 0:
+            exactly_zero += 1
         
-        # Update starting position
+        # New protocol, count all zero interactions
+        if new_protocol:
+            if direction == "L":
+                zero_interaction = zero_interaction + (abs((start_value - amount) // 100))
+                    
+            elif direction == "R":
+                zero_interaction = zero_interaction + ((start_value + amount) // 100)
+        
+        # Update starting positions
         if direction == "L":
             start_value = (start_value - amount) % 100
+            
         elif direction == "R":
             start_value = (start_value + amount) % 100
                 
     if new_protocol:
-        return wrap_arounds
+        return zero_interaction
     
     return exactly_zero
 
 
 def part_one(data: str):
     ln = Utils.utils.lines(data)
-    new_protocol = False
-    value = apply_rotation(ln, new_protocol)
+    value = apply_rotation(ln, new_protocol=False)
     return value
 
 def part_two(data: str):
     ln = Utils.utils.lines(data)
-    new_protocol = True
-    value = apply_rotation(ln, new_protocol)
+    value = apply_rotation(ln, new_protocol=True)
     return value
 
 def main():
