@@ -21,16 +21,12 @@ def unlock_secret_entrance(instructions: list[str], protocol: Protocol) -> int:
         if protocol == Protocol.NEW:
             if direction == "L":
                 new_pos = dial_pos - rot
-                # If at zero, count how many times we pass zero again
                 if dial_pos == 0:
                     zero_interactions += (rot // 100)
-                # If we land exactly on zero, count that plus how many times we passed zero
                 elif (new_pos % 100) == 0:
                     zero_interactions += 1 + (rot // 100)
-                # If we pass zero but don't land on it only count the passes
                 elif new_pos < 0:
                     zero_interactions += abs(new_pos // 100)
-                    
             elif direction == "R":
                 zero_interactions += (dial_pos + rot) // 100
                             
