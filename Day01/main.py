@@ -1,53 +1,67 @@
-import Utils.utils
+# AoC 2025 - Heme98
 
-def apply_rotation(rotation: list[str], new_protocol: bool) -> int:
-    exactly_zero = 0
-    zero_interaction = 0
-    start_value = 50
+from pathlib import Path
+
+def count_zero_interactions(instructions: list[str], count_all_interactions: bool) -> int:
+    zero_interactions = 0
+    dial_pos = 50
     
-    for r in rotation:
-        direction, amount = r[0], int(r[1:])
+    for instruction in instructions:
+        direction, rot = instruction[0], int(instruction[1:])
         
         # Old protocol, only count when reaching exactly zero
-        if not new_protocol and start_value == 0:
-            exactly_zero += 1
+        if not count_all_interactions and dial_pos == 0:
+            zero_interactions += 1
         
         # New protocol, count all zero interactions
-        if new_protocol:
+        if count_all_interactions:
             if direction == "L":
-                zero_interaction = zero_interaction + (abs((start_value - amount) // 100))
+                # If at zero, count how many times we pass zero again
+                if dial_pos == 0:
+                    zero_interactions += (rot // 100)
+                # If we land exactly on zero, count that plus how many times we passed zero
+                elif ((dial_pos - rot) % 100) == 0:
+                    zero_interactions += 1 + (rot // 100)
+                # If we pass zero but don't land on it only count the passes
+                elif dial_pos > 0:
+                    zero_interactions += abs((dial_pos - rot) // 100)
                     
             elif direction == "R":
-                zero_interaction = zero_interaction + ((start_value + amount) // 100)
-        
+                zero_interactions += (dial_pos + rot) // 100
+                            
         # Update starting positions
         if direction == "L":
-            start_value = (start_value - amount) % 100
+            dial_pos = (dial_pos - rot) % 100
             
         elif direction == "R":
-            start_value = (start_value + amount) % 100
+            dial_pos = (dial_pos + rot) % 100
                 
-    if new_protocol:
-        return zero_interaction
-    
-    return exactly_zero
+    return zero_interactions
 
 
 def part_one(data: str):
-    ln = Utils.utils.lines(data)
-    value = apply_rotation(ln, new_protocol=False)
-    return value
+    instructions = data.strip().split('\n')
+    return count_zero_interactions(instructions, count_all_interactions=False)
 
 def part_two(data: str):
-    ln = Utils.utils.lines(data)
-    value = apply_rotation(ln, new_protocol=True)
-    return value
+    instructions = data.strip().split('\n')
+    return count_zero_interactions(instructions, count_all_interactions=True)
 
 def main():
-    # data = Utils.utils.read_input("Day01/test_input.txt")
-    data = Utils.utils.read_input("Day01/real_input.txt")
-    print("Part 1:", part_one(data))
-    print("Part 2:", part_two(data))
+    """Run solutions on test and real inputs."""
+    base_path = Path(__file__).parent
+    
+    # Test input
+    test_data = (base_path / "test_input.txt").read_text()
+    print("\n=== Test Results ===")
+    print(f"Part 1: {part_one(test_data)}")
+    print(f"Part 2: {part_two(test_data)}")
+    
+    # Real input
+    real_data = (base_path / "real_input.txt").read_text()
+    print("\n=== Real Results ===")
+    print(f"Part 1: {part_one(real_data)}")
+    print(f"Part 2: {part_two(real_data)}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
