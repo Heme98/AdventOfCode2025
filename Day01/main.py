@@ -1,8 +1,6 @@
 import Utils.utils
 
-
-
-def apply_rotation(rotation: list[str], new_method: bool) -> int:
+def apply_rotation(rotation: list[str], new_protocol: bool) -> int:
     wrap_arounds = 0
     exactly_zero = 0
     start_value = 50
@@ -14,46 +12,31 @@ def apply_rotation(rotation: list[str], new_method: bool) -> int:
         if direction == "L":
             
             # old method, only count when reaching exactly zero
-            if not new_method and start_value == 0:
+            if not new_protocol and start_value == 0:
                 exactly_zero += 1
             
             # new method, count zero and all zero crossings
-            if new_method:
-                # number_of_wraps = abs((start_value - amount) // 100)
-                # wrap_arounds = wrap_arounds + number_of_wraps
-                if start_value > 0 and amount >= start_value:
-                    wrap_arounds += 1 + (amount - start_value) // 100
-                elif start_value == 0 and amount >= 100:
-                    # Starting from 0, we hit it again after 100 steps, then every 100 steps
-                    wrap_arounds += amount // 100
+            if new_protocol:
+                number_of_wraps = abs((start_value - amount) // 100)
+                wrap_arounds = wrap_arounds + number_of_wraps
                 
         elif direction == "R":
-            
             # old method, only count when reaching exactly zero
-            if not new_method and start_value == 0:
+            if not new_protocol and start_value == 0:
                 exactly_zero += 1
             
             # new method, count zero and all zero crossings
-            if new_method:
-                # number_of_wraps = (start_value + amount) // 100
-                # wrap_arounds = wrap_arounds + number_of_wraps
-                if start_value > 0:
-                    steps_to_zero = 100 - start_value
-                if amount >= steps_to_zero:
-                    wrap_arounds += 1 + (amount - steps_to_zero) // 100
-                else:  # position == 0
-                    # Starting from 0, we hit it again after 100 steps, then every 100 steps
-                    if amount >= 100:
-                        wrap_arounds += amount // 100
+            if new_protocol:
+                number_of_wraps = (start_value + amount) // 100
+                wrap_arounds = wrap_arounds + number_of_wraps
         
-        # Update start_value
+        # Update starting position
         if direction == "L":
             start_value = (start_value - amount) % 100
         elif direction == "R":
             start_value = (start_value + amount) % 100
-        
-                        
-    if new_method:
+                
+    if new_protocol:
         return wrap_arounds
     
     return exactly_zero
