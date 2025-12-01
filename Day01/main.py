@@ -1,49 +1,51 @@
 # AoC 2025 - Heme98
 from pathlib import Path
+from enum import Enum
 
-def count_zero_interactions(instructions: list[str], count_all_interactions: bool) -> int:
+class Protocol(Enum):
+    OLD = False
+    NEW = True
+
+def unlock_secret_entrance(instructions: list[str], protocol: Protocol) -> int:
     zero_interactions = 0
     dial_pos = 50
     
     for instruction in instructions:
         direction, rot = instruction[0], int(instruction[1:])
         
-        # Old protocol, only count when reaching exactly zero
-        if not count_all_interactions and dial_pos == 0:
+        # Old protocol, only count when dial reaches exactly zero
+        if protocol == Protocol.OLD and dial_pos == 0:
             zero_interactions += 1
         
         # New protocol, count all zero interactions
-        if count_all_interactions:
+        if protocol == Protocol.NEW:
             if direction == "L":
+                new_pos = dial_pos - rot
                 # If at zero, count how many times we pass zero again
                 if dial_pos == 0:
                     zero_interactions += (rot // 100)
                 # If we land exactly on zero, count that plus how many times we passed zero
-                elif ((dial_pos - rot) % 100) == 0:
+                elif (new_pos % 100) == 0:
                     zero_interactions += 1 + (rot // 100)
                 # If we pass zero but don't land on it only count the passes
-                elif dial_pos > 0:
-                    zero_interactions += abs((dial_pos - rot) // 100)
+                elif new_pos < 0:
+                    zero_interactions += abs(new_pos // 100)
                     
             elif direction == "R":
                 zero_interactions += (dial_pos + rot) // 100
                             
-        # Update starting positions
-        if direction == "L":
-            dial_pos = (dial_pos - rot) % 100
-            
-        elif direction == "R":
-            dial_pos = (dial_pos + rot) % 100
+        # Update dial position
+        dial_pos = (dial_pos + (rot if direction == "R" else -rot)) % 100
                 
     return zero_interactions
 
 def part_one(data: str):
     instructions = data.strip().split('\n')
-    return count_zero_interactions(instructions, count_all_interactions=False)
+    return unlock_secret_entrance(instructions, protocol=Protocol.OLD)
 
 def part_two(data: str):
     instructions = data.strip().split('\n')
-    return count_zero_interactions(instructions, count_all_interactions=True)
+    return unlock_secret_entrance(instructions, protocol=Protocol.NEW)
 
 def main():
     """Run solutions on test and real inputs."""
