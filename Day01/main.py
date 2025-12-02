@@ -3,8 +3,8 @@ from pathlib import Path
 from enum import Enum
 
 class Protocol(Enum):
-    OLD = False
-    NEW = True
+    OLD = "old_protocol"
+    NEW = "new_protocol"
 
 def unlock_secret_entrance(instructions: list[str], protocol: Protocol) -> int:
     zero_interactions = 0
