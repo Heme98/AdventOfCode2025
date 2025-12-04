@@ -7,7 +7,7 @@ class SubstringsRepeat(Enum):
     ONLY_TWICE = "only_twice"
     TWICE_OR_MORE = "twice_or_more"
 
-def find_new_invalid_ids(id_ranges: str, repeat_frequency: SubstringsRepeat):
+def find_new_invalid_ids(id_ranges: list[str], repeat_frequency: SubstringsRepeat):
     invalid_ids = 0
     for id_range in id_ranges:
         low_bound, high_bound = id_range.strip().split('-')

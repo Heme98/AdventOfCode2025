@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-def get_highest_joltage(banks: str, number_of_batteries: int) -> str:
+def get_highest_joltage(banks: list[str], number_of_batteries: int) -> str:
     highest_joltage = 0
     for bank in banks:
         stack = []
